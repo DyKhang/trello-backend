@@ -3,18 +3,17 @@ import express from "express";
 import { CLOSE_DB, CONNECT_DB } from "~/config/mongodb";
 import exitHook from "async-exit-hook";
 import { env } from "~/config/environment";
+import { APIs_V1 } from "~/routes/v1";
 
 const START_SERVER = () => {
   const app = express();
 
-  const port = 2003;
-  const hostname = "localhost";
+  // Cho phép server nhận dữ liệu req.body là json data
+  app.use(express.json());
 
-  app.get("/", async (req, res) => {
-    res.end("<h1>Hello World!</h1>");
-  });
+  app.use("/v1", APIs_V1);
 
-  app.listen(port, hostname, () => {
+  app.listen(env.APP_PORT, env.APP_HOST, () => {
     console.log(`Server is running at http://${env.APP_HOST}:${env.APP_PORT}/`);
   });
 
