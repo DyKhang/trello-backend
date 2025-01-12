@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import Joi from "joi";
 import { StatusCodes } from "http-status-codes";
+import ApiError from "~/utils/ApiError";
 
 const createNew = async (req, res, next) => {
   const correctCondition = Joi.object({
@@ -15,9 +16,11 @@ const createNew = async (req, res, next) => {
     // Validate dữ liệu thành công thì cho request đi tiếp đến controller
     next();
   } catch (error) {
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-      errors: new Error(error).message,
-    });
+    // Đẩy lỗi qua bên file server.js để xử lý trong middleware lỗi tập trung
+    next(
+      // Class ApiError được custom dựa trên Error để có thể custom được mã lỗi
+      new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message)
+    );
   }
 };
 
